@@ -5,10 +5,31 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.egg-info/
+dist/
+build/
 
-# Data (Optional: exclude if you want to keep data local)
-# data/
+# Data (user-specific, not tracked)
+data/papers.json
+data/ideas.json
+data/experiments.json
+data/raw/
+data/chroma_db/
+data/knowledge/group_papers/
+*.pdf
+
+# Logs
+logs/
+*.log
 
 # IDE settings
 .vscode/
 .idea/
+.gemini/
+
+# Virtual environment
+.venv/
+venv/
+
+# Test cache
+.pytest_cache/

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optoagent"
+version = "1.0.0"
+description = "AI-powered research assistant for optoelectronics labs"
+requires-python = ">=3.9"
+dependencies = [
+    "python-dotenv",
+    "requests",
+    "feedparser",
+    "openai",
+    "schedule",
+    "chromadb",
+    "pypdf",
+    "flask",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+
+[project.scripts]
+optoagent = "optoagent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

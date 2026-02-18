@@ -1,0 +1,126 @@
+"""
+Paper search module using Exa.ai and RSS feeds.
+"""
+
+import json
+import os
+from datetime import datetime, timedelta
+from typing import List, Optional
+
+import feedparser
+import requests
+
+from optoagent.config import ACADEMIC_DOMAINS, RESEARCH_GROUPS, RSS_FEEDS, SEARCH_DAYS_BACK
+from optoagent.logger import get_logger
+from optoagent.models import Paper
+
+logger = get_logger(__name__)
+
+
+class PaperSearcher:
+    def __init__(self, exa_api_key: Optional[str] = None):
+        self.exa_api_key = exa_api_key
+
+    def search_active(self, query: str, limit: int = 5, academic_only: bool = True) -> List[Paper]:
+        """Active search using Exa.ai (if key provided) or simulation."""
+        if self.exa_api_key:
+            return self._search_exa(query, limit, academic_only)
+        return self._search_simulated(query, limit)
+
+    def monitor_sources(self) -> List[Paper]:
+        """Monitor RSS feeds and Research Groups defined in config.yaml."""
+        papers: List[Paper] = []
+
+        # 1. Check RSS Feeds
+        if RSS_FEEDS:
+            logger.info("Checking %d Journal RSS feeds...", len(RSS_FEEDS))
+            papers.extend(self._check_rss_feeds(RSS_FEEDS))
+
+        # 2. Check Research Groups (via Exa)
+        if self.exa_api_key and RESEARCH_GROUPS:
+            logger.info("Checking %d Research Groups via Exa...", len(RESEARCH_GROUPS))
+            for group in RESEARCH_GROUPS:
+                group_name = group.get("name", "Unknown")
+                query = group.get("query", "")
+                logger.info("  Tracking Group: %s", group_name)
+                group_papers = self._search_exa(query, limit=3)
+                for p in group_papers:
+                    p.title = f"[{group_name}] {p.title}"
+                papers.extend(group_papers)
+
+        return papers
+
+    # ---- Internal methods ----
+
+    def _check_rss_feeds(self, rss_feeds: List[str]) -> List[Paper]:
+        new_papers: List[Paper] = []
+        for url in rss_feeds:
+            try:
+                feed = feedparser.parse(url)
+                logger.info("  Parsed RSS %s: %d entries found.", url, len(feed.entries))
+                for entry in feed.entries[:3]:
+                    p = Paper(
+                        title=entry.title,
+                        authors=[a.name for a in entry.get("authors", [])] or ["Unknown"],
+                        abstract=entry.get("summary", "No abstract available.")[:500],
+                        url=entry.link,
+                        published_date=entry.get("published", ""),
+                    )
+                    new_papers.append(p)
+            except Exception as e:
+                logger.error("Failed to parse RSS %s: %s", url, e)
+        return new_papers
+
+    def _search_simulated(self, query: str, limit: int) -> List[Paper]:
+        logger.info("[Simulated] Searching for: %s", query)
+        return [
+            Paper(
+                title=f"Simulated Result for {query}",
+                authors=["AI Researcher"],
+                abstract="This is a placeholder result because no EXA_API_KEY was provided.",
+                url="http://example.com/simulated",
+                published_date="2024-01-01",
+            )
+        ] * limit
+
+    def _search_exa(self, query: str, limit: int, academic_only: bool = True) -> List[Paper]:
+        logger.info("[Exa] Searching for: %s (Academic Only: %s)", query, academic_only)
+        url = "https://api.exa.ai/search"
+        headers = {
+            "x-api-key": self.exa_api_key,
+            "Content-Type": "application/json",
+        }
+
+        # Only return papers published within the configured window
+        start_date = (datetime.now() - timedelta(days=SEARCH_DAYS_BACK)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+        payload: dict = {
+            "query": query,
+            "numResults": limit,
+            "useAutoprompt": True,
+            "startPublishedDate": start_date,
+            "contents": {"text": True},
+        }
+
+        if academic_only:
+            payload["includeDomains"] = ACADEMIC_DOMAINS
+
+        try:
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            data = response.json()
+
+            papers = []
+            for result in data.get("results", []):
+                p = Paper(
+                    title=result.get("title", "No Title"),
+                    authors=result.get("author", "").split(", ") if result.get("author") else [],
+                    abstract=result.get("text", "")[:800] + "...",
+                    url=result.get("url"),
+                    published_date=result.get("publishedDate"),
+                )
+                papers.append(p)
+            return papers
+        except Exception as e:
+            logger.error("[Exa] Search failed: %s", e)
+            return []

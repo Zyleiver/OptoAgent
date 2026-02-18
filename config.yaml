@@ -1,0 +1,142 @@
+# ============================================================
+# OptoAgent 集中配置文件
+# ============================================================
+# API 密钥请在 .env 文件中配置，此处管理所有业务配置。
+
+app:
+  name: OptoAgent
+  version: "1.0.0"
+  log_level: INFO      # DEBUG / INFO / WARNING / ERROR
+  data_dir: data
+  logs_dir: logs
+
+# ---- 搜索配置 ----
+search:
+  default_query: "miniaturized spectrometer OR spectral imaging OR 2D material optoelectronics"
+  default_limit: 5
+  days_back: 30            # 只搜索最近 N 天内发表的论文
+  academic_domains:
+    - nature.com
+    - science.org
+    - arxiv.org
+    - ieee.org
+    - optica.org
+    - acs.org
+    - rsc.org
+    - springer.com
+    - wiley.com
+    - sciencedirect.com
+    - aip.org
+    - aps.org
+    - iop.org
+    - pnas.org
+    - spie.org
+
+# ---- 定时调度配置 ----
+scheduler:
+  interval: 6
+  unit: hours           # minutes / hours
+
+# ---- 追踪源配置 ----
+tracking:
+  rss_feeds: []
+
+  research_groups:
+    - name: "Nature Portfolio (Nature, Photonics, Materials, Nanotech...)"
+      query: 'site:nature.com (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "Science Family (Science, Advances, Robotics...)"
+      query: 'site:science.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "Wiley Advanced Journals (Adv. Mat, Energy, Functional...)"
+      query: 'site:onlinelibrary.wiley.com (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "ACS Journals (Nano Letters, ACS Nano, JACS...)"
+      query: 'site:pubs.acs.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "Optica Publishing (Optica, OL, OE...)"
+      query: 'site:opg.optica.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "Physics Journals (PRL, PRX, RMP...)"
+      query: 'site:journals.aps.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "AIP Publishing (APL, JCP...)"
+      query: 'site:pubs.aip.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "RSC Journals (Chem. Soc. Rev, Nanoscale...)"
+      query: 'site:pubs.rsc.org (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+    - name: "Elsevier (Nano Energy, Materials Today...)"
+      query: 'site:sciencedirect.com (spectroscopy OR optoelectronics OR nanophotonics) "2025" OR "2026"'
+
+# ---- 目标期刊列表 ----
+journals:
+  target_journals:
+    - "Nature Reviews Materials"
+    - "CHEMICAL REVIEWS"
+    - "Nature Energy"
+    - "NATURE"
+    - "SCIENCE"
+    - "CHEMICAL SOCIETY REVIEWS"
+    - "NATURE MATERIALS"
+    - "REVIEWS OF MODERN PHYSICS"
+    - "Nature Nanotechnology"
+    - "Energy & Environmental Science"
+    - "Nature Photonics"
+    - "Nature Reviews Chemistry"
+    - "NATURE METHODS"
+    - "PHYSICS REPORTS-REVIEW SECTION OF PHYSICS LETTERS"
+    - "ADVANCED MATERIALS"
+    - "Advanced Energy Materials"
+    - "Materials Today"
+    - "PROGRESS IN MATERIALS SCIENCE"
+    - "Nature Chemistry"
+    - "ACCOUNTS OF CHEMICAL RESEARCH"
+    - "Nature Physics"
+    - "Science Robotics"
+    - "REPORTS ON PROGRESS IN PHYSICS"
+    - "Nano Today"
+    - "ACS Energy Letters"
+    - "Advanced Science"
+    - "ADVANCED FUNCTIONAL MATERIALS"
+    - "Nano Energy"
+    - "JOURNAL OF THE AMERICAN CHEMICAL SOCIETY"
+    - "Materials Horizons"
+    - "Light-Science & Applications"
+    - "Advances in Optics and Photonics"
+    - "ACS Nano"
+    - "National Science Review"
+    - "Science Advances"
+    - "Applied Physics Reviews"
+    - "NANO LETTERS"
+    - "ANGEWANDTE CHEMIE-INTERNATIONAL EDITION"
+    - "Physical Review X"
+    - "Nature Communications"
+    - "Small"
+    - "Journal of Materials Chemistry A"
+    - "CHEMISTRY OF MATERIALS"
+    - "PROCEEDINGS OF THE NATIONAL ACADEMY OF SCIENCES OF THE UNITED STATES OF AMERICA"
+    - "Optica"
+    - "PHYSICAL REVIEW LETTERS"
+    - "Nanoscale Horizons"
+    - "Laser & Photonics Reviews"
+    - "Nano-Micro Letters"
+    - "Nano Research"
+    - "ACS Applied Materials & Interfaces"
+    - "Applied Materials Today"
+    - "Materials Research Letters"
+    - "Journal of Physical Chemistry Letters"
+    - "ACS Photonics"
+    - "Advanced Optical Materials"
+    - "Nanoscale"
+    - "ACS Sensors"
+    - "Environmental Science & Technology Letters"
+    - "Journal of Materials Chemistry C"
+    - "Journal of Materials Chemistry B"
+    - "ACS Biomaterials Science & Engineering"
+    - "APL Photonics"
+    - "ACS Chemical Biology"
+    - "Journal of Physical Chemistry C"
+    - "APL Materials"
+    - "OPTICS LETTERS"
+    - "OPTICS EXPRESS"

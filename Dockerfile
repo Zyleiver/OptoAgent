@@ -2,20 +2,17 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install dependencies
-# We don't have a requirements.txt yet, so we install directly or create one.
-# Valid structure: COPY requirements.txt . -> RUN pip install...
-# For now, inline install implementation:
-RUN pip install requests schedule
-
-# Copy source code
+# Install package
+COPY pyproject.toml .
 COPY src/ /app/src/
+COPY config.yaml .
+RUN pip install --no-cache-dir .
 
-# Create data directory
-RUN mkdir -p /app/data
+# Create directories
+RUN mkdir -p /app/data /app/logs
 
 # Volume for persistence
-VOLUME /app/data
+VOLUME ["/app/data", "/app/logs"]
 
-# Default command: Run Scheduler
-CMD ["python", "src/scheduler.py", "--interval", "24"]
+# Default command: Run Scheduler (every 24 hours)
+CMD ["optoagent-scheduler", "--interval", "24"]
