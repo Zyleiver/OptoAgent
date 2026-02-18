@@ -16,7 +16,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-org/OptoAgent.git
+git clone https://github.com/Zyleiver/OptoAgent.git
 cd OptoAgent
 
 # 创建虚拟环境（推荐）
@@ -66,6 +66,18 @@ APP_SECRET=xxxxxxxxxxxxxxxx
 
 编辑 `config.yaml` 来自定义搜索、调度、追踪源等所有业务参数（API 密钥除外，始终在 `.env` 中管理）。
 
+主要可配置项：
+
+| 配置项 | 位置 | 说明 |
+|--------|------|------|
+| `search.default_query` | config.yaml | 默认搜索关键词 |
+| `search.default_limit` | config.yaml | 每次搜索返回论文数 |
+| `search.days_back` | config.yaml | 只搜索最近 N 天的论文（默认 30） |
+| `search.academic_domains` | config.yaml | 限定搜索的 15 个学术域名 |
+| `scheduler.interval` | config.yaml | 定时任务间隔 |
+| `tracking.research_groups` | config.yaml | 9 大出版商追踪查询配置 |
+| `journals.target_journals` | config.yaml | 60+ 目标期刊列表 |
+
 ---
 
 ## 二、快速上手
@@ -77,10 +89,12 @@ optoagent active_search --query "miniaturized spectrometer" --limit 5
 ```
 
 OptoAgent 会自动：
-1. ✅ 在 15 个高影响力学术域名中搜索相关论文
-2. ✅ 用 LLM 生成每篇论文的摘要
-3. ✅ 存入本地论文库 (`data/papers.json`)
-4. ✅ 通过飞书推送通知（如已配置）
+1. ✅ 在 15 个高影响力学术域名中搜索最近 30 天的论文
+2. ✅ 通过 Exa highlights + summary 提取干净的论文内容
+3. ✅ 通过 Semantic Scholar / CrossRef 补全准确的作者和摘要
+4. ✅ 用 LLM 生成每篇论文的结构化摘要
+5. ✅ 存入本地论文库 (`data/papers.json`)
+6. ✅ 通过飞书推送通知（如已配置）
 
 ### 2.2 完整搜索+灵感生成循环
 
@@ -213,10 +227,15 @@ research miniaturized spectrometer
 data/knowledge/
 ├── 光谱仪综述笔记.md
 ├── 实验方案_量子点制备.txt
-└── 重要论文全文.pdf
+├── group_papers/
+│   └── 重要论文全文.pdf
+└── reviews/
+    └── 文献综述.md
 ```
 
-支持的文件格式：`.md`、`.txt`、`.pdf`
+支持的文件格式：`.md`、`.txt`、`.pdf`（自动递归扫描子目录）
+
+> **💡 编码支持**：文件可以是 UTF-8、UTF-16、GBK 等编码，OptoAgent 会自动检测并正确读取。
 
 ### 6.2 建立索引
 
@@ -235,7 +254,32 @@ OptoAgent 会将所有文档按 1000 字符分块，使用 `all-MiniLM-L6-v2` �
 
 ---
 
-## 七、自定义追踪源
+## 七、元数据补全
+
+OptoAgent 在搜索论文后，会自动通过学术 API 补全准确的 **作者列表** 和 **论文摘要**：
+
+### 补全流程
+
+1. **从 URL 提取 DOI** — 支持 nature.com、science.org、wiley.com、acs.org 等主流出版商
+2. **查询 Semantic Scholar** — 通过 DOI 获取准确的作者和摘要
+3. **查询 CrossRef** — 如 Semantic Scholar 未收录，通过 CrossRef DOI 查询
+4. **标题搜索** — 如无法提取 DOI，通过标题模糊搜索 Semantic Scholar
+5. **保留 Exa 数据** — 以上均未命中时，使用 Exa AI 生成的摘要
+
+### 补全效果
+
+| 数据来源 | Authors | Abstract |
+|----------|---------|----------|
+| Semantic Scholar (DOI) | ✅ 准确完整 | ✅ 论文原始摘要 |
+| CrossRef (DOI) | ✅ 准确完整 | ⚠️ 部分期刊无摘要 |
+| Semantic Scholar (标题搜索) | ✅ 大概率命中 | ✅ 论文原始摘要 |
+| Exa 原始数据 (fallback) | ❌ 通常为空 | ⚠️ AI 生成摘要 |
+
+> **⚠ 注意**：极新论文（发表 < 7 天）可能尚未被 Semantic Scholar 收录，此时使用 Exa AI summary 作为 fallback。
+
+---
+
+## 八、自定义追踪源
 
 编辑 `config.yaml` 的 `tracking` 部分来添加你关注的出版商或课题组：
 
@@ -251,7 +295,7 @@ tracking:
 
 ---
 
-## 八、常见问题
+## 九、常见问题
 
 ### Q: 没有 API Key 能用吗？
 
@@ -268,6 +312,7 @@ tracking:
 ### Q: 数据存在哪里？
 
 - 论文和灵感存储在 `data/papers.json` 和 `data/ideas.json`
+- 实验记录存储在 `data/experiments.json`
 - 向量索引存储在 `data/chroma_db/` 目录
 - 研究笔记原文在 `data/knowledge/` 目录
 - 日志输出在 `logs/optoagent.log`
@@ -276,3 +321,11 @@ tracking:
 
 - **API 密钥** → `.env` 文件
 - **所有业务配置** → `config.yaml`（搜索参数、调度频率、追踪源、目标期刊等）
+
+### Q: 论文的作者信息为什么有时为空？
+
+Exa.ai 搜索 API 不直接返回作者信息。OptoAgent 通过 Semantic Scholar 和 CrossRef 自动补全，但极新论文（< 7 天）或非标准出版页面可能无法补全。如需 100% 覆盖，建议配合 Google Scholar 手动确认。
+
+### Q: 搜索结果不够新怎么办？
+
+调整 `config.yaml` 中的 `search.days_back` 参数（默认 30 天）。减小数值只搜索更近期的论文，增大数值扩大搜索范围。

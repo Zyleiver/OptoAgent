@@ -66,10 +66,19 @@ optoagent active_search --query "miniaturized spectrometer" --limit 3
 ```
 ✅ 预期：
 - 日志输出 `[Exa] Searching for: miniaturized spectrometer`
-- 找到 ≤3 篇论文，每篇有标题和 URL
+- 日志输出 `[Exa] Enriching metadata for 3 papers...`
+- 看到 `✓ Authors enriched [semantic_scholar_doi]: ...` 或类似的元数据补全信息
+- 找到 ≤3 篇论文，每篇有标题、URL 和真实作者列表
 - 如果配了 OPENAI_API_KEY，还会看到 `Summarizing new paper: ...`
 
-### 3.2 监控追踪源
+### 3.2 验证元数据补全质量
+
+```bash
+type data\papers.json | findstr "authors"
+```
+✅ 预期：authors 字段包含真实作者姓名（如 `"Kefan Song"`, `"Gang Wu"` 等），而非空列表 `[]`
+
+### 3.3 监控追踪源
 
 ```bash
 optoagent monitor_sources
@@ -77,6 +86,7 @@ optoagent monitor_sources
 ✅ 预期：
 - 日志输出 `Checking 9 Research Groups via Exa...`
 - 逐个 Tracking Group 搜索
+- 每组搜索后触发元数据补全
 
 ---
 
@@ -91,10 +101,11 @@ optoagent run_cycle --query "perovskite solar cell" --limit 2
 ```
 ✅ 预期：
 1. 搜索论文
-2. 对新论文调用 LLM 做摘要 → `Summarizing new paper: ...`
-3. RAG 检索知识库上下文 → `Retrieving context for: ...`
-4. CoT 推理生成 Idea → `Generated new idea: ...`
-5. 飞书通知发送（如果配了 webhook）
+2. 元数据补全 → `✓ Authors enriched ...` / `✓ Abstract enriched ...`
+3. 对新论文调用 LLM 做摘要 → `Summarizing new paper: ...`
+4. RAG 检索知识库上下文 → `Retrieving context for: ...`
+5. CoT 推理生成 Idea → `Generated new idea: ...`
+6. 飞书通知发送（如果配了 webhook）
 
 ### 4.2 验证数据已存储
 
@@ -113,7 +124,7 @@ optoagent list_ideas
 手动在 `data/knowledge/` 下创建一个测试 Markdown：
 
 ```bash
-echo "# 量子点光谱仪研究笔记\n\n我们课题组主要研究 CdSe/ZnS 量子点在微型光谱仪的应用。" > data\knowledge\test_rag.md
+echo "# 量子点光谱仪研究笔记`n`n我们课题组主要研究 CdSe/ZnS 量子点在微型光谱仪的应用。" > data\knowledge\test_rag.md
 ```
 
 ### 5.2 建立索引
@@ -122,6 +133,7 @@ echo "# 量子点光谱仪研究笔记\n\n我们课题组主要研究 CdSe/ZnS �
 optoagent index_knowledge
 ```
 ✅ 预期：`Indexed X chunks from local knowledge base.`
+⚠ 如果 `data/knowledge/` 中有非 UTF-8 编码文件（如 UTF-16 BOM 文件），应正常处理而不崩溃
 
 ### 5.3 验证 RAG 增强
 
@@ -141,6 +153,8 @@ optoagent run_cycle --query "quantum dot spectrometer" --limit 1
 运行 `run_cycle` 后检查飞书群聊是否收到：
 - 📄 论文通知（标题 + 作者 + 摘要）
 - 💡 Idea 通知（标题 + 推理过程）
+
+⚠ 如果看到日志 `Webhook returned error: status=200 body={"code":19007,...}`，说明飞书机器人未启用，请在飞书开放平台启用机器人能力。
 
 ### 6.2 交互式机器人
 
@@ -187,6 +201,7 @@ type logs\optoagent.log
 ✅ 预期：看到格式化的日志，包含时间戳和模块名，例如：
 ```
 [2026-02-18 21:30:00] INFO    optoagent.modules.searcher: [Exa] Searching for: ...
+[2026-02-18 21:30:01] INFO    optoagent.modules.searcher:   ✓ Authors enriched [semantic_scholar_doi]: ...
 ```
 
 ---
@@ -208,11 +223,12 @@ python -m pytest tests/ -v
 | 2 | `add_experiment` | 无 | experiments.json 有数据 |
 | 3 | 模拟搜索 | 无 | `[Simulated]` 输出 |
 | 4 | Exa 搜索 | EXA | `[Exa]` 输出 + 论文 |
-| 5 | LLM 摘要 | OPENAI | `Summarizing new paper` |
-| 6 | Idea 生成 | OPENAI | `Generated new idea` |
-| 7 | 知识库索引 | 无 | `Indexed X chunks` |
-| 8 | RAG 增强 | OPENAI | `Retrieving context` |
-| 9 | 飞书通知 | FEISHU | 群内收到消息 |
-| 10 | 调度器 | 视配置 | dry-run 正常退出 |
-| 11 | 日志文件 | 无 | `logs/optoagent.log` 有内容 |
-| 12 | pytest | 无 | 9/9 PASSED |
+| 5 | 元数据补全 | EXA | `✓ Authors enriched` |
+| 6 | LLM 摘要 | OPENAI | `Summarizing new paper` |
+| 7 | Idea 生成 | OPENAI | `Generated new idea` |
+| 8 | 知识库索引 | 无 | `Indexed X chunks` |
+| 9 | RAG 增强 | OPENAI | `Retrieving context` |
+| 10 | 飞书通知 | FEISHU | 群内收到消息 |
+| 11 | 调度器 | 视配置 | dry-run 正常退出 |
+| 12 | 日志文件 | 无 | `logs/optoagent.log` 有内容 |
+| 13 | pytest | 无 | 9/9 PASSED |
