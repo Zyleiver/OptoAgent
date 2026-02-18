@@ -6,10 +6,14 @@ except ImportError:
     OpenAI = None
 
 class PaperSummarizer:
-    def __init__(self, api_key: str = None, base_url: str = None, model: str = "gpt-4o"):
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY") or os.getenv("GEMINI_API_KEY")
+    def __init__(self, api_key: str = None, base_url: str = None, model: str = None):
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4o")
+        base_url = base_url or os.getenv("OPENAI_BASE_URL")
+        
         self.client = OpenAI(api_key=self.api_key, base_url=base_url) if self.api_key and OpenAI else None
-        self.model = model
+
+
 
     def summarize(self, paper: Paper) -> str:
         """
