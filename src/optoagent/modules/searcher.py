@@ -13,6 +13,7 @@ import requests
 from optoagent.config import ACADEMIC_DOMAINS, RESEARCH_GROUPS, RSS_FEEDS, SEARCH_DAYS_BACK
 from optoagent.logger import get_logger
 from optoagent.models import Paper
+from optoagent.modules.metadata import MetadataEnricher
 
 logger = get_logger(__name__)
 
@@ -20,6 +21,7 @@ logger = get_logger(__name__)
 class PaperSearcher:
     def __init__(self, exa_api_key: Optional[str] = None):
         self.exa_api_key = exa_api_key
+        self._enricher = MetadataEnricher()
 
     def search_active(self, query: str, limit: int = 5, academic_only: bool = True) -> List[Paper]:
         """Active search using Exa.ai (if key provided) or simulation."""
@@ -134,6 +136,12 @@ class PaperSearcher:
                     published_date=result.get("publishedDate"),
                 )
                 papers.append(p)
+
+            # Enrich metadata via Semantic Scholar / CrossRef
+            if papers:
+                logger.info("[Exa] Enriching metadata for %d papers...", len(papers))
+                papers = self._enrich_papers(papers)
+
             return papers
         except Exception as e:
             logger.error("[Exa] Search failed: %s", e)
@@ -170,4 +178,29 @@ class PaperSearcher:
             return " ".join(clean_lines[:10])[:800]
 
         return "No abstract available."
+
+    def _enrich_papers(self, papers: List[Paper]) -> List[Paper]:
+        """Enrich papers with accurate metadata from Semantic Scholar / CrossRef."""
+        for p in papers:
+            enrichment = self._enricher.enrich_paper(
+                title=p.title,
+                url=p.url,
+                current_authors=p.authors,
+                current_abstract=p.abstract,
+            )
+            if enrichment.get("enriched"):
+                source = enrichment["source"]
+                # Update authors if enrichment found them
+                if enrichment["authors"]:
+                    p.authors = enrichment["authors"]
+                    logger.info("  ✓ Authors enriched [%s]: %s", source, ", ".join(p.authors[:3]))
+                # Update abstract only if Semantic Scholar/CrossRef provides one
+                # (keep Exa summary as fallback since it's already clean)
+                if enrichment["abstract"] and len(enrichment["abstract"]) > 50:
+                    p.abstract = enrichment["abstract"]
+                    logger.info("  ✓ Abstract enriched [%s]: %s...", source, p.abstract[:60])
+            else:
+                logger.debug("  ○ No enrichment for: %s", p.title[:60])
+        return papers
+
 
