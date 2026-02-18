@@ -1,0 +1,14 @@
+# Environment variables (Secrets)
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data (Optional: exclude if you want to keep data local)
+# data/
+
+# IDE settings
+.vscode/
+.idea/
