@@ -14,10 +14,10 @@ load_dotenv()
 
 def main():
     parser = argparse.ArgumentParser(description="OptoAgent CLI")
-    parser.add_argument("command", choices=["add_experiment", "run_cycle", "list_papers", "list_ideas", "active_search", "monitor_rss"], help="Command to execute")
-    parser.add_argument("--query", help="Search query")
-    parser.add_argument("--limit", type=int, default=5, help="Number of results")
-    parser.add_argument("--rss", help="Comma-separated RSS Feed URLs")
+    parser.add_argument("command", choices=["add_experiment", "run_cycle", "list_papers", "list_ideas", "active_search", "monitor_sources", "index_knowledge"], help="Command to execute")
+    parser.add_argument("--query", help="Search query for active search or run_cycle")
+    parser.add_argument("--limit", type=int, default=5, help="Number of papers to find")
+    # parser.add_argument("--rss", help="Comma-separated RSS Feed URLs") # Deprecated in favor of config
     parser.add_argument("--title", help="Title for 'add_experiment'")
     parser.add_argument("--desc", help="Description for 'add_experiment'")
     parser.add_argument("--results", help="Results for 'add_experiment'")
@@ -51,15 +51,18 @@ def main():
         for i in ideas:
             print(f"- {i.title}\n  Reasoning: {i.reasoning[:100]}...")
 
-    elif args.command in ["run_cycle", "active_search", "monitor_rss"]:
+    elif args.command == "index_knowledge":
+        print("Indexing knowledge base from 'data/knowledge'...")
+        kb.index_documents()
+        
+    elif args.command in ["run_cycle", "active_search", "monitor_sources"]:
         
         papers = []
-        if args.command == "monitor_rss":
-            rss_urls = args.rss.split(",") if args.rss else [
-                "http://rss.sciencedirect.com/publication/science/09270248" # Example: Solar Energy Materials
-            ]
-            print(f"Monitoring RSS feeds: {rss_urls}")
-            papers = searcher.monitor_journals(rss_urls)
+        if args.command == "monitor_sources":
+            print("Monitoring tracked sources (Journals & Groups)...")
+            papers = searcher.monitor_sources()
+            if not papers:
+               print("No new papers found from tracked sources.")
         
         elif args.command == "active_search" or args.command == "run_cycle":
             query = args.query or "perovskite solar cells"
@@ -84,14 +87,24 @@ def main():
             print("No new papers found during this cycle.")
         
         # for 'run_cycle', we also generate ideas
-        if args.command == "run_cycle":
+        if args.command == "run_cycle" or (args.command == "monitor_sources" and new_papers):
              # 3. Generate Ideas
             all_papers = kb.get_papers()
             experiments = kb.get_experiments()
             
-            if all_papers:
+            if new_papers or all_papers:
+                # Use RAG to get relevant context
+                context = ""
+                if new_papers:
+                     query_text = f"{new_papers[0].title} {new_papers[0].summary}"
+                     print(f"Retrieving context for: {new_papers[0].title}...")
+                     context = kb.query_similar_context(query_text)
+                
                 generator = IdeaGenerator()
-                idea = generator.generate_idea(all_papers[-5:], experiments) # Use last 5 papers
+                # Use recent papers + RAG context
+                recent_papers = new_papers if new_papers else all_papers[-5:]
+                idea = generator.generate_idea(recent_papers, experiments, context)
+                
                 kb.add_idea(idea)
                 notifier.notify_new_idea(idea)
                 print(f"Generated new idea: {idea.title}")

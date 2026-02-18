@@ -15,32 +15,36 @@ class IdeaGenerator:
         
         self.client = OpenAI(api_key=self.api_key, base_url=base_url) if self.api_key and OpenAI else None
 
-    def generate_idea(self, papers: List[Paper], experiments: List[Experiment]) -> Idea:
+    def generate_idea(self, papers: List[Paper], experiments: List[Experiment], context: str = "") -> Idea:
         print("Generating idea using Chain of Thought...")
         
         if self.client:
-            return self._generate_with_llm(papers, experiments)
+            return self._generate_with_llm(papers, experiments, context)
         else:
             return self._generate_simulated(papers, experiments)
 
-    def _generate_with_llm(self, papers: List[Paper], experiments: List[Experiment]) -> Idea:
+    def _generate_with_llm(self, papers: List[Paper], experiments: List[Experiment], context: str = "") -> Idea:
         papers_text = "\n".join([f"- {p.title}: {p.summary or p.abstract[:200]}" for p in papers])
         experiments_text = "\n".join([f"- {e.title}: {e.description} (Status: {e.status}, Results: {e.results})" for e in experiments]) or "No internal experiments recorded yet."
         
+        context_text = ""
+        if context:
+            context_text = f"\n## Internal Knowledge Base (Relevant Notes):\n{context}\n"
+
         prompt = f"""You are a research idea generator for an optoelectronics lab.
 
-Based on the following recent papers and internal experiments, propose ONE novel research idea.
+Based on the following recent papers, internal experiments, and knowledge base notes, propose ONE novel research idea.
 
 ## Recent Papers:
 {papers_text}
 
 ## Internal Experiments:
 {experiments_text}
-
+{context_text}
 ## Instructions:
 Use Chain-of-Thought reasoning:
 1. Identify key trends and gaps from the papers.
-2. Find connections with internal experiments (if any).
+2. Find connections with internal experiments and knowledge base notes.
 3. Propose a specific, actionable experiment.
 4. Assess feasibility.
 

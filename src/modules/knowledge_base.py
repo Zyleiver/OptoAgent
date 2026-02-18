@@ -59,6 +59,90 @@ class KnowledgeBase:
         self._save_data(self.ideas_file, ideas)
         print(f"Added idea: {idea.title}")
 
+    def index_documents(self, source_dir: str = "data/knowledge"):
+        """
+        Index PDF and Markdown files from source_dir into ChromaDB.
+        """
+        import chromadb
+        from chromadb.utils import embedding_functions
+        
+        if not os.path.exists(source_dir):
+            os.makedirs(source_dir)
+            print(f"Created knowledge directory: {source_dir}")
+            return
+
+        client = chromadb.PersistentClient(path=os.path.join(self.data_dir, "chroma_db"))
+        # Use default lightweight embedding model (all-MiniLM-L6-v2) usually built-in or downloaded
+        sentence_transformer_ef = embedding_functions.DefaultEmbeddingFunction()
+        
+        collection = client.get_or_create_collection(
+            name="research_notes",
+            embedding_function=sentence_transformer_ef
+        )
+        
+        print(f"Scanning {source_dir} for knowledge...")
+        ids = []
+        documents = []
+        metadatas = []
+        
+        for root, _, files in os.walk(source_dir):
+            for file in files:
+                filepath = os.path.join(root, file)
+                content = ""
+                
+                if file.endswith(".md") or file.endswith(".txt"):
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                elif file.endswith(".pdf"):
+                    try:
+                        from pypdf import PdfReader
+                        reader = PdfReader(filepath)
+                        content = ""
+                        for page in reader.pages:
+                            content += page.extract_text() + "\n"
+                    except Exception as e:
+                        print(f"Failed to read PDF {file}: {e}")
+                        continue
+                
+                if content:
+                    # Simple chunking by 1000 chars for now
+                    chunks = [content[i:i+1000] for i in range(0, len(content), 1000)]
+                    for idx, chunk in enumerate(chunks):
+                        ids.append(f"{file}_{idx}")
+                        documents.append(chunk)
+                        metadatas.append({"source": file, "chunk_id": idx})
+        
+        if documents:
+            collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
+            print(f"Indexed {len(documents)} chunks from local knowledge base.")
+        else:
+            print("No documents found to index.")
+
+    def query_similar_context(self, query: str, n_results: int = 3) -> str:
+        """
+        Retrieve relevant context from ChromaDB.
+        """
+        import chromadb
+        from chromadb.utils import embedding_functions
+        
+        client = chromadb.PersistentClient(path=os.path.join(self.data_dir, "chroma_db"))
+        sentence_transformer_ef = embedding_functions.DefaultEmbeddingFunction()
+        
+        try:
+            collection = client.get_collection(name="research_notes", embedding_function=sentence_transformer_ef)
+            results = collection.query(query_texts=[query], n_results=n_results)
+            
+            context = []
+            if results['documents']:
+                for idx, doc in enumerate(results['documents'][0]):
+                     meta = results['metadatas'][0][idx]
+                     context.append(f"[Source: {meta['source']}]\n{doc}")
+            
+            return "\n\n".join(context)
+        except Exception:
+            # Collection might not exist yet
+            return ""
+
     def get_ideas(self) -> List[Idea]:
         data = self._load_data(self.ideas_file)
         return [Idea(**p) for p in data]

@@ -1,22 +1,59 @@
 [
     {
-        "title": "Physicists explain the exceptional energy-harvesting efficiency of ...",
-        "authors": [],
-        "abstract": "Physicists explain the exceptional energy-harvesting efficiency of perovskites\n\nshare this!\n\nTweet\n\nShare\n\n- [Email] \n- [1] \n\n---\n\nFebruary 16, 2026\n\n# Physicists explain the exceptional energy-harvesting efficiency of perovskites\n\nby [Institute of Science and Technology Austria] \n\nedited by [Gaby Clark], reviewed by [Robert Egan] \n\n[Editors' notes] \n\n[The GIST] \n\n[Add as preferred source] \n\n---\n\nISTA physicists explain the exceptional energy-harvesting efficiency of perovskites. Left to right: ...",
-        "url": "https://phys.org/news/2026-02-physicists-exceptional-energy-harvesting-efficiency.html",
-        "summary": "I apologize, but the content you've provided is only the title, abstract (which is just a restatement of the title), author information (Institute of Science and Technology Austria), and some editorial notes for an article *about* a paper.\n\nThe actual scientific content, including the key innovations, methods, results, and conclusions, is missing. Without the full text of the paper or article, I am unable to summarize its exceptional energy-harvesting efficiency of perovskites or describe its key innovations and results.\n\nIf you can provide the full text of the paper, I would be happy to summarize it for you!",
-        "published_date": "2026-02-16T07:33:58.847Z",
-        "found_date": "2026-02-18T15:33:59.792843"
+        "title": "Efficient blue electroluminescence from reduced-dimensional perovskites",
+        "authors": [
+            "Friend",
+            "Richard H."
+        ],
+        "abstract": "### Subjects\n\n- [Lasers, LEDs and light sources] \n\n## Abstract\n\nPerovskite light-emitting diodes (LEDs) show promises for next-generation displays owing to their excellent luminescent properties and low cost. Despite substantial progress with green- and red-emitting devices, the development of efficient blue perovskite LEDs has lagged behind. Here we demonstrate efficient blue perovskite LEDs based on a mixed two-dimensional–three-dimensional perovskite and a multifunctional ionic additive that ...",
+        "url": "https://www.nature.com/articles/s41566-024-01382-6?error=cookies_not_supported&code=de63f67a-663c-42d7-b788-b0d3aba1a9d2",
+        "summary": "This paper addresses the long-standing challenge of achieving efficient blue perovskite light-emitting diodes (LEDs), which have historically lagged behind their green and red counterparts despite the overall promise of perovskite technology for next-generation displays.\n\nThe **key innovation** presented is the development of efficient blue perovskite LEDs using two main strategies:\n1.  **Mixed two-dimensional–three-dimensional (2D-3D) perovskite architecture:** This hybrid structure is crucial for optimizing the emissive properties.\n2.  **Multifunctional ionic additive:** The introduction of this specific additive plays a vital role in enhancing performance.\n\nThe **result** is the successful demonstration of efficient blue perovskite LEDs, marking a significant step towards realizing full-color perovskite-based displays.",
+        "published_date": "2024-01-26T00:00:00.000Z",
+        "found_date": "2026-02-18T15:51:51.124259"
     },
     {
-        "title": "Perovskite solar cells: A new explanation for their high efficiency",
+        "title": "Spectra stable blue perovskite light-emitting diodes - Nature",
         "authors": [
-            "Emily Warrender"
+            "Chen",
+            "Jun"
         ],
-        "abstract": "Perovskite solar cells: A new explanation for their high efficiency\n\n[Facebook] [Linkedin] [Twitter] \n\n[News] \n\n[Government] \n\n- [Workplace] \n- [Finance] \n\n[Health & Social Care] \n\n- [Women’s Health] \n- [Pharma] \n- [Mental Health] \n- [Diseases & Conditions] \n- [Cancer Research] \n- [Coronavirus (COVID-19)] \n\n[Environment] \n\n- [Sustainable Development] \n- [Circular Economy] \n\n[Technology] \n\n- [Digital Transformation] \n- [Artificial Intelligence] \n\n[Special Reports] \n\n- [Technology] \n- [HR & Traini...",
-        "url": "https://www.openaccessgovernment.org/perovskite-solar-cells-a-new-explanation-for-their-high-efficiency/205123/",
-        "summary": "It appears there might have been a misunderstanding or an error in the content provided.\n\nThe text you've given me for the \"paper\" titled \"Perovskite solar cells: A new explanation for their high efficiency\" by Emily Warrender does not contain the actual research content. Instead, it seems to be a list of categories and links (e.g., [Facebook], [Linkedin], [News], [Government], [Workplace], [Finance], [Health & Social Care], [Environment], [Technology], [Special Reports]).\n\nTherefore, I cannot summarize the key innovations and results of the paper, as the paper's content itself is missing.\n\nIf you can provide the full text of the research paper, I would be happy to read it and provide a concise summary focusing on its key innovations and results for a researcher.",
-        "published_date": "2026-02-17T09:33:58.847Z",
-        "found_date": "2026-02-18T15:33:59.792843"
+        "abstract": "\n \n Introduction Perovskite light-emitting diodes (PeLEDs) attract significant attention because of their high photoluminescence quantum yields (PLQYs), tunable light emission, and high color purity 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Extensive efforts have been made on improving the device performance of PeLEDs. Very recently, green-emitting, red-emitting, and near-infrared-emitting PeLEDs have obtained impressive external quantum efficiencies (EQEs) exceeding 20%, which represents an important step...",
+        "url": "https://www.nature.com/articles/s41467-019-09794-7",
+        "summary": "Based on the provided excerpt, here's a summary focusing on the context and the *implied* key innovation and problem statement, as the actual results and detailed innovations are beyond the given text:\n\n**Context and Problem:**\nPerovskite light-emitting diodes (PeLEDs) are highly promising due to their excellent photoluminescence quantum yields (PLQYs), color tunability, and high color purity. Significant progress has been made in device performance, with green, red, and near-infrared emitting PeLEDs achieving impressive external quantum efficiencies (EQEs) exceeding 20%.\n\n**Implied Key Innovation/Focus (from Title and Introduction):**\nThe title, \"Spectra stable blue perovskite light-emitting diodes,\" strongly suggests that this paper addresses a critical challenge: achieving **high-performance and spectrally stable blue-emitting PeLEDs**. While other colors have seen remarkable advancements in EQE, blue PeLEDs often face issues with efficiency, purity, and, crucially, spectral stability, which hinder their practical application. This paper is therefore likely to introduce novel strategies or materials to overcome these limitations specifically for blue emission, aiming to bring blue PeLEDs up to par with their green and red counterparts in terms of performance and stability.\n\n**Key Results (Anticipated, based on Title):**\nWhile the specific results are not detailed in the abstract/introduction, the title indicates the paper will demonstrate **spectrally stable blue PeLEDs**, implying significant improvements in:\n*   **Spectral stability:** Maintaining the desired blue emission wavelength over operation time.\n*   **Device performance:** Likely achieving high EQEs for blue emission, comparable to or exceeding current state-of-the-art blue PeLEDs.",
+        "published_date": "2019-04-23T00:00:00.000Z",
+        "found_date": "2026-02-18T15:51:51.124259"
+    },
+    {
+        "title": "Kinetically-controlled intermediate-direct-pinning for homogeneous energy landscapes in quasi-two-dimensional perovskites for efficient and narrow blue emission",
+        "authors": [],
+        "abstract": "Kinetically-controlled intermediate-direct-pinning for homogeneous energy landscapes in quasi-two-dimensional perovskites for efficient and narrow blue emission | Nature Communications\n[Skip to main content] \nThank you for visiting nature.com. You are using a browser version with limited support for CSS. To obtain\nthe best experience, we recommend you use a more up to date browser (or turn off compatibility mode in\nInternet Explorer). In the meantime, to ensure continued support, we are displayi...",
+        "url": "https://www.nature.com/articles/s41467-025-62863-y",
+        "summary": "While I don't have access to the full paper or its abstract beyond the title, the title itself, \"Kinetically-controlled intermediate-direct-pinning for homogeneous energy landscapes in quasi-two-dimensional perovskites for efficient and narrow blue emission,\" is quite descriptive and allows for a strong inference of its key innovations and results.\n\n**Summary based on the title:**\n\nThis paper introduces a novel approach to overcome a significant challenge in quasi-two-dimensional (quasi-2D) perovskite materials: achieving efficient and spectrally narrow blue emission. Quasi-2D perovskites are highly promising for optoelectronic applications, but their inherent structural heterogeneity (variations in quantum well thickness) typically leads to broad emission spectra and reduced efficiency due to a distribution of energy levels, creating an inhomogeneous energy landscape.\n\nThe **key innovation** lies in a newly developed synthetic strategy termed **\"kinetically-controlled intermediate-direct-pinning.\"** This method appears to involve a precise manipulation of the material's growth or formation kinetics, specifically at an \"intermediate\" stage, to \"pin\" or stabilize certain structural or electronic properties.\n\nThe **primary result and impact** of this kinetically-controlled pinning is the creation of **\"homogeneous energy landscapes\"** within the quasi-2D perovskite material. By ensuring uniformity in the electronic structure—likely by controlling the distribution of perovskite layer thicknesses (n-value distribution) or preventing energy funnelling to lower-energy defects—the authors effectively eliminate the sources of inhomogeneous broadening.\n\nThis breakthrough in material control directly translates into **superior optoelectronic performance**:\n\n1.  **Efficient Blue Emission:** The homogeneous energy landscape ensures that excitons are efficiently confined and recombine radiatively, leading to high quantum efficiencies.\n2.  **Narrow Blue Emission:** By eliminating the distribution of energy levels, the emission spectrum becomes significantly sharper and purer, which is crucial for high-color-purity displays and advanced lighting applications where precise color rendition is required.\n\nIn essence, the paper presents a sophisticated synthetic control mechanism that addresses a fundamental limitation of quasi-2D perovskites, paving the way for their practical application in high-performance blue light-emitting devices.",
+        "published_date": "2025-10-30T00:00:00.000Z",
+        "found_date": "2026-02-18T15:54:05.357441"
+    },
+    {
+        "title": "Multivalent-effect immobilization of reduced-dimensional perovskites for efficient and spectrally stable deep-blue light-emitting diodes",
+        "authors": [
+            "Wang",
+            "Ning"
+        ],
+        "abstract": "\n \n \n \n \n \n \n \n \n \n Article \n \n \n Published: 03 February 2025 \n \n \n Bin Zhao 1, Huiyu Ji 1, Ziang Zang 1, Lingmei Kong  \n ORCID: orcid.org/0000-0002-2514-4700 2, Chunshuang Chu 3, Dongyuan Han 1, Jie Wang 1, Yuhao Fu 4, Zi-Hui Zhang 3, Yingguo Yang  \n ORCID: orcid.org/0000-0002-1749-2799 5, 6, Lijun Zhang  \n ORCID: orcid.org/0000-0002-6438-5486 4, Xuyong Yang  \n ORCID: orcid.org/0000-0003-3597-1491 2 &amp; … Ning Wang  \n ORCID: orcid.org/0000-0001-9570-952X 1   \n \n \n \n Nature Nanotechnology \n vo...",
+        "url": "https://www.nature.com/articles/s41565-024-01852-6",
+        "summary": "I apologize, but the provided text only includes the title, author list, publication date, and journal information. The abstract content itself is missing.\n\nTo summarize the paper and identify its key innovations and results, I need the actual abstract or the full article content.\n\nPlease provide the abstract or the full text of the paper \"Multivalent-effect immobilization of reduced-dimensional perovskites for efficient and spectrally stable deep-blue light-emitting diodes\" by Ning Wang and colleagues. Once you provide that, I will be happy to summarize it for you, highlighting the key innovations and results.",
+        "published_date": "2025-02-03T00:00:00.000Z",
+        "found_date": "2026-02-18T15:54:05.357441"
+    },
+    {
+        "title": "Spectra stable blue perovskite light-emitting diodes",
+        "authors": [
+            "Chen",
+            "Jun"
+        ],
+        "abstract": "\n \n Introduction Perovskite light-emitting diodes (PeLEDs) attract significant attention because of their high photoluminescence quantum yields (PLQYs), tunable light emission, and high color purity 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Extensive efforts have been made on improving the device performance of PeLEDs. Very recently, green-emitting, red-emitting, and near-infrared-emitting PeLEDs have obtained impressive external quantum efficiencies (EQEs) exceeding 20%, which represents an important step...",
+        "url": "https://www.nature.com/articles/s41467-019-09794-7",
+        "summary": "The provided abstract text is cut off and only offers a very general introduction to Perovskite Light-Emitting Diodes (PeLEDs), highlighting their advantages like high photoluminescence quantum yields (PLQYs), tunable emission, and high color purity. It mentions the impressive external quantum efficiencies (EQEs) exceeding 20% achieved in green, red, and near-infrared PeLEDs.\n\n**Unfortunately, the provided text does not contain any specific information regarding the key innovations or results related to *blue* perovskite light-emitting diodes, which is the focus of the paper's title.** To summarize the key innovations and results, the full abstract or a more substantial portion of the paper would be required.",
+        "published_date": null,
+        "found_date": "2026-02-18T15:54:05.357441"
     }
 ]

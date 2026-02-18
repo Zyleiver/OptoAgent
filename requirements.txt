@@ -2,3 +2,7 @@ python-dotenv
 requests
 feedparser
 openai
+schedule
+chromadb
+pypdf
+flask
