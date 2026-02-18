@@ -99,7 +99,14 @@ class PaperSearcher:
             "numResults": limit,
             "useAutoprompt": True,
             "startPublishedDate": start_date,
-            "contents": {"text": True},
+            "contents": {
+                "text": True,
+                "highlights": {
+                    "numSentences": 5,
+                    "query": query,
+                },
+                "summary": True,
+            },
         }
 
         if academic_only:
@@ -112,10 +119,17 @@ class PaperSearcher:
 
             papers = []
             for result in data.get("results", []):
+                # Build clean abstract from highlights or summary
+                abstract = self._extract_abstract(result)
+
+                # Extract authors
+                author_str = result.get("author", "") or ""
+                authors = [a.strip() for a in author_str.split(",") if a.strip()] if author_str else []
+
                 p = Paper(
                     title=result.get("title", "No Title"),
-                    authors=result.get("author", "").split(", ") if result.get("author") else [],
-                    abstract=result.get("text", "")[:800] + "...",
+                    authors=authors,
+                    abstract=abstract,
                     url=result.get("url"),
                     published_date=result.get("publishedDate"),
                 )
@@ -124,3 +138,36 @@ class PaperSearcher:
         except Exception as e:
             logger.error("[Exa] Search failed: %s", e)
             return []
+
+    @staticmethod
+    def _extract_abstract(result: dict) -> str:
+        """Extract the best abstract from Exa result, preferring summary > highlights > text."""
+        # 1. Prefer summary (AI-generated, clean)
+        summary = result.get("summary")
+        if summary and len(summary.strip()) > 50:
+            return summary.strip()
+
+        # 2. Highlights: clean, relevant sentences
+        highlights = result.get("highlights")
+        if highlights and isinstance(highlights, list):
+            # highlights is a list of dicts with "text" or just strings
+            sentences = []
+            for h in highlights:
+                if isinstance(h, dict):
+                    sentences.append(h.get("text", ""))
+                elif isinstance(h, str):
+                    sentences.append(h)
+            combined = " ".join(s.strip() for s in sentences if s.strip())
+            if len(combined) > 50:
+                return combined
+
+        # 3. Fallback: raw text (truncated, stripped of obvious junk)
+        text = result.get("text", "")
+        if text:
+            # Skip the first few lines which often contain nav/cookie junk
+            lines = text.split("\n")
+            clean_lines = [ln.strip() for ln in lines if len(ln.strip()) > 30 and "cookie" not in ln.lower() and "javascript" not in ln.lower()]
+            return " ".join(clean_lines[:10])[:800]
+
+        return "No abstract available."
+
